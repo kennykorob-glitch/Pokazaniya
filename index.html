@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Показания счётчиков — кв. 105</title>
+<style>
+:root{--bg:#f3f1ec;--card:#fff;--ink:#1d2024;--mute:#6a6f76;--line:#d9d6cd;--hot:#d2392f;--cold:#2268c4;--el:#a86a00;--el2:#6b4aa8;--ok:#1f7a48;--warn:#b3541e;--btn:#1d2024;--btnt:#fff;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#17191c;--card:#222529;--ink:#eceae4;--mute:#9ba0a7;--line:#383c42;--hot:#ff7468;--cold:#6aa6ff;--el:#e8b04a;--el2:#b79bff;--ok:#5fcf93;--warn:#ff9a63;--btn:#eceae4;--btnt:#17191c;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:18px 14px 40px}
+h1{font-size:22px;margin:0 0 12px}
+h2{font-size:17px;margin:22px 0 8px}
+nav{display:flex;gap:6px;margin-bottom:16px}
+nav button{flex:1;background:transparent;color:var(--ink);border:1px solid var(--line)}
+nav button.on{background:var(--btn);color:var(--btnt);border-color:var(--btn)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.f{display:grid;grid-template-columns:1fr 1.2fr;gap:4px 10px;align-items:center;margin-bottom:10px;border-left:6px solid var(--c);padding-left:10px}
+.f label{font-weight:600}
+.f small{grid-column:1/3;color:var(--mute);font-size:13px}
+.f small.w{color:var(--warn)}
+input,select,textarea{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+.f input{font-size:20px;font-variant-numeric:tabular-nums}
+button,.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:10px 14px;cursor:pointer;background:var(--btn);color:var(--btnt);text-decoration:none;text-align:center;display:inline-block}
+button.g{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1;min-width:130px}
+pre{white-space:pre-wrap;font:15px/1.5 inherit;font-family:inherit;margin:0}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.sum div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+.sum b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.sum span{font-size:13px;color:var(--mute)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td i{display:block;font-style:normal;color:var(--mute);font-size:12px}
+td button{padding:4px 8px;font-size:13px}
+.empty{color:var(--mute);padding:14px 0}
+svg text{fill:var(--mute);font-size:11px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>Показания счётчиков, кв. 105</h1>
+<nav><button id="n1" class="on">Ввод и письмо</button><button id="n2">Статистика</button></nav>
+
+<section id="p1">
+  <div class="row" style="margin-bottom:12px">
+    <div><label for="mon" style="font-size:14px;color:var(--mute)">Месяц</label><input type="month" id="mon"></div>
+    <div><label for="to" style="font-size:14px;color:var(--mute)">Кому (ТСЖ)</label><input type="email" id="to" value="rodonit_28@mail.ru"></div>
+  </div>
+  <div id="form"></div>
+  <h2>Письмо</h2>
+  <div class="card"><pre id="prev"></pre></div>
+  <div class="row">
+    <button id="save">Сохранить в историю</button>
+    <a class="btn" id="ml">Создать письмо в почтовом приложении</a>
+    <a class="btn" id="gm" target="_blank" rel="noopener">Gmail в браузере</a>
+    <button class="g" id="cp">Скопировать</button>
+  </div>
+  <p style="color:var(--mute);font-size:13px;margin:10px 0 0">Если черновик не заполнился, нажмите «Скопировать» и вставьте текст в новое письмо. Тема: Показания кв 105.</p>
+  <p id="msg" style="color:var(--ok);min-height:1.4em;margin:8px 0 0"></p>
+</section>
+
+<section id="p2" class="hide">
+  <div id="sum" class="sum"></div>
+  <div class="card">
+    <select id="sel" aria-label="Счётчик"></select>
+    <div id="chart"></div>
+  </div>
+  <h2>История</h2>
+  <div class="card tw" id="tab"></div>
+  <h2>Данные</h2>
+  <div class="row">
+    <button class="g" id="ex">Скачать копию (JSON)</button>
+    <button class="g" id="csv">Скачать таблицу (CSV)</button>
+    <button class="g" id="im">Загрузить копию</button>
+  </div>
+  <p style="color:var(--mute);font-size:13px">Данные хранятся в браузере на этом устройстве. Делайте копию, если меняете телефон или очищаете браузер.</p>
+  <input type="file" id="file" accept=".json,application/json" hidden>
+</section>
+</main>
+<script>
+const MN=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+const MT=[
+ {id:'hvs',n:'ХВС',m:'ХВС',d:3,c:'--cold',u:'м³'},
+ {id:'gvs',n:'ГВС',m:'ГВС',d:3,c:'--hot',u:'м³'},
+ {id:'t1',n:'Электро, тариф 1',m:'электро I',d:2,c:'--el',u:'кВт·ч'},
+ {id:'t2',n:'Электро, тариф 2',m:'электро II',d:2,c:'--el2',u:'кВт·ч'}
+];
+const $=s=>document.querySelector(s);
+let H={};
+try{H=JSON.parse(localStorage.getItem('meters105')||'{}')}catch(e){}
+const store=()=>{try{localStorage.setItem('meters105',JSON.stringify(H))}catch(e){$('#msg').textContent='Не удалось сохранить в браузере — скачайте копию'}};
+const comma=(v,d)=>Number(v).toFixed(d).replace('.',',');
+const keys=()=>Object.keys(H).sort();
+const lbl=k=>{const[y,m]=k.split('-');return MN[+m-1]+' '+y};
+const short=k=>{const[y,m]=k.split('-');return MN[+m-1].slice(0,3)+' '+y.slice(2)};
+const mi=k=>{const[y,m]=k.split('-');return y*12+ +m};
+function prevOf(k){const l=keys().filter(x=>x<k);return l.length?l[l.length-1]:null}
+function cons(k,id){const p=prevOf(k);if(!p||H[k][id]==null||H[p][id]==null)return null;return{v:H[k][id]-H[p][id],gap:mi(k)-mi(p)}}
+
+const d0=new Date();
+$('#mon').value=d0.getFullYear()+'-'+String(d0.getMonth()+1).padStart(2,'0');
+
+function buildForm(){
+ const k=$('#mon').value,cur=H[k]||{},p=prevOf(k);
+ $('#form').innerHTML=MT.map(m=>`<div class="f" style="--c:var(${m.c})"><label for="i_${m.id}">${m.n}</label>
+ <input id="i_${m.id}" inputmode="decimal" autocomplete="off" placeholder="${m.u}" value="${cur[m.id]!=null?comma(cur[m.id],m.d):''}">
+ <small id="h_${m.id}"></small></div>`).join('');
+ MT.forEach(m=>$('#i_'+m.id).oninput=upd);
+ upd();
+}
+const val=id=>{const s=$('#i_'+id).value.trim().replace(/\s/g,'').replace(',','.');const n=parseFloat(s);return s===''||isNaN(n)?null:n}
+function upd(){
+ const k=$('#mon').value,p=prevOf(k);
+ MT.forEach(m=>{
+  const v=val(m.id),h=$('#h_'+m.id);let t='',w=false;
+  if(p&&H[p][m.id]!=null){t='Прошлые: '+comma(H[p][m.id],m.d);
+   if(v!=null){const d=v-H[p][m.id];if(d<0){t+=' — меньше прошлых, проверьте';w=true}else t+=' · расход '+comma(d,m.d)+' '+m.u}}
+  h.textContent=t;h.className=w?'w':'';
+ });
+ const ok=MT.every(m=>val(m.id)!=null)&&k;
+ const per=k?lbl(k):'';
+ const body='Добрый день!\nПоказания приборов по квартире 105.\nЗа '+per+'\n'+MT.map(m=>m.m+' '+(val(m.id)!=null?comma(val(m.id),m.d):'—')).join('\n');
+ const su='Показания кв 105';
+ $('#prev').textContent='Тема: '+su+'\n\n'+body;
+ const to=$('#to').value.trim();
+ $('#gm').href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to='+encodeURIComponent(to)+'&su='+encodeURIComponent(su)+'&body='+encodeURIComponent(body);
+ $('#ml').href='mailto:'+to+'?subject='+encodeURIComponent(su)+'&body='+encodeURIComponent(body.replace(/\n/g,'\r\n'));
+ ['gm','ml','save'].forEach(i=>{$('#'+i).style.opacity=ok?1:.45;$('#'+i).dataset.ok=ok?1:''});
+ window._body=body;
+}
+function save(){
+ const k=$('#mon').value;if(!k||MT.some(m=>val(m.id)==null))return false;
+ H[k]={};MT.forEach(m=>H[k][m.id]=val(m.id));store();
+ $('#msg').textContent='Сохранено: '+lbl(k);upd();return true;
+}
+$('#mon').onchange=()=>{$('#msg').textContent='';buildForm()};
+$('#to').oninput=upd;
+$('#save').onclick=()=>{if(!save())$('#msg').textContent='Заполните все четыре показания'};
+['gm','ml'].forEach(i=>$('#'+i).addEventListener('click',e=>{if(!e.currentTarget.dataset.ok){e.preventDefault();$('#msg').textContent='Заполните все четыре показания';return}save()}));
+$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText('Показания кв 105\n\n'+window._body);$('#msg').textContent='Скопировано'}catch(e){$('#msg').textContent='Не вышло — выделите текст письма вручную'}};
+
+function tab(n){$('#p1').classList.toggle('hide',n!==1);$('#p2').classList.toggle('hide',n!==2);$('#n1').classList.toggle('on',n===1);$('#n2').classList.toggle('on',n===2);if(n===2)stats()}
+$('#n1').onclick=()=>tab(1);$('#n2').onclick=()=>tab(2);
+
+$('#sel').innerHTML=MT.map(m=>`<option value="${m.id}">${m.n}, расход по месяцам (${m.u})</option>`).join('');
+$('#sel').onchange=chart;
+function stats(){
+ const ks=keys();
+ if(!ks.length){$('#sum').innerHTML='';$('#chart').innerHTML='<p class="empty">Пока нет данных. Сохраните показания на первой вкладке.</p>';$('#tab').innerHTML='';return}
+ const last=ks[ks.length-1];
+ $('#sum').innerHTML=MT.slice(0,3).map(()=>'').join('');
+ // сводка: последний расход, среднее, максимум по выбранному счётчику
+ sumFor($('#sel').value);
+ chart();
+ const rows=ks.slice().reverse().map(k=>'<tr><td>'+lbl(k)+'</td>'+MT.map(m=>{const v=H[k][m.id],c=cons(k,m.id);return '<td>'+(v!=null?comma(v,m.d):'—')+(c?'<i>'+(c.v>=0?'+':'')+comma(c.v,m.d)+(c.gap>1?' за '+c.gap+' мес.':'')+'</i>':'')+'</td>'}).join('')+'<td><button class="g" data-k="'+k+'" data-a="e">Изменить</button> <button class="g" data-k="'+k+'" data-a="d">Удалить</button></td></tr>').join('');
+ $('#tab').innerHTML='<table><thead><tr><th>Месяц</th>'+MT.map(m=>'<th>'+m.n.replace('Электро, тариф ','Т')+'</th>').join('')+'<th></th></tr></thead><tbody>'+rows+'</tbody></table>';
+ $('#tab').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.k;
+  if(b.dataset.a==='d'){if(confirm('Удалить '+lbl(k)+'?')){delete H[k];store();stats()}}
+  else{$('#mon').value=k;buildForm();tab(1);scrollTo(0,0)}
+ });
+}
+function series(id){return keys().map(k=>({k,c:cons(k,id)})).filter(x=>x.c)}
+function sumFor(id){
+ const m=MT.find(x=>x.id===id),s=series(id).filter(x=>x.c.gap===1);
+ if(!s.length){$('#sum').innerHTML='<div style="grid-column:1/4"><span>Для расхода нужно минимум два месяца подряд.</span></div>';return}
+ const v=s.map(x=>x.c.v),avg=v.reduce((a,b)=>a+b,0)/v.length,mx=Math.max(...v),mxk=s[v.indexOf(mx)].k;
+ $('#sum').innerHTML=`<div><b>${comma(v[v.length-1],m.d)}</b><span>последний месяц, ${m.u}</span></div><div><b>${comma(avg,m.d)}</b><span>среднее в месяц</span></div><div><b>${comma(mx,m.d)}</b><span>максимум: ${short(mxk)}</span></div>`;
+}
+function chart(){
+ const id=$('#sel').value,m=MT.find(x=>x.id===id),s=series(id).filter(x=>x.c.gap===1);
+ sumFor(id);
+ if(!s.length){$('#chart').innerHTML='<p class="empty">График появится, когда будет два месяца подряд.</p>';return}
+ const W=640,Hh=220,pl=44,pb=28,pt=14,n=s.length,mx=Math.max(...s.map(x=>x.c.v),0.0001),bw=Math.min(48,(W-pl)/n*.7),step=(W-pl)/n;
+ let g='';
+ for(let i=0;i<=4;i++){const y=pt+(Hh-pt-pb)*(1-i/4);g+=`<line x1="${pl}" x2="${W}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-6}" y="${y+4}" text-anchor="end">${(mx*i/4).toFixed(m.d===3?1:0)}</text>`}
+ s.forEach((x,i)=>{const h=(Hh-pt-pb)*Math.max(x.c.v,0)/mx,cx=pl+step*i+step/2,y=Hh-pb-h;
+  g+=`<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${h}" rx="3" fill="var(${m.c})"/><text x="${cx}" y="${y-4}" text-anchor="middle">${x.c.v.toFixed(m.d===3?1:0)}</text><text x="${cx}" y="${Hh-8}" text-anchor="middle">${short(x.k)}</text>`});
+ $('#chart').innerHTML=`<svg viewBox="0 0 ${W} ${Hh}" width="100%" role="img" aria-label="Расход по месяцам: ${m.n}">${g}</svg>`;
+}
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+$('#ex').onclick=()=>dl('pokazaniya-kv105.json',JSON.stringify(H,null,1),'application/json');
+$('#csv').onclick=()=>dl('pokazaniya-kv105.csv','\ufeffмесяц;'+MT.map(m=>m.n).join(';')+'\n'+keys().map(k=>k+';'+MT.map(m=>H[k][m.id]!=null?comma(H[k][m.id],m.d):'').join(';')).join('\n'),'text/csv');
+$('#im').onclick=()=>$('#file').click();
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(typeof o!=='object'||Array.isArray(o))throw 0;Object.keys(o).forEach(k=>{if(/^\d{4}-\d{2}$/.test(k)&&typeof o[k]==='object')H[k]=o[k]});store();stats();buildForm()}catch(x){alert('Не удалось прочитать файл')}};r.readAsText(f);e.target.value=''};
+buildForm();
+</script>
+</body>
+</html>
